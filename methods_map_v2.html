@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта методов ML | Предиктивная аналитика ВЭУ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f8;
+    --bg3: #f0f0f2;
+    --border: #e8e8ec;
+    --border2: #d0d0d8;
+    --text: #0a0a0f;
+    --text2: #555560;
+    --text3: #9090a0;
+    --green: #1DB87A;
+    --green-light: #e8faf3;
+    --green-border: #b8ecd8;
+    --purple: #7B5CF0;
+    --purple-light: #f0edff;
+    --purple-border: #c8b8f8;
+    --blue: #2580d8;
+    --blue-light: #e8f4ff;
+    --blue-border: #b8d8f8;
+    --orange: #e87930;
+    --orange-light: #fff0e5;
+    --orange-border: #f5cba8;
+    --black: #0a0a0f;
+    --radius: 14px;
+    --radius-pill: 100px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px; display: flex; align-items: center; justify-content: space-between; height: 56px;
+  }
+  .nav-logo { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: var(--black); display: flex; flex-direction: column; line-height: 1; }
+  .nav-logo span { color: var(--purple); font-weight: 400; font-size: 12px; letter-spacing: 0.04em; margin-top: 2px; }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-links a { font-size: 13px; color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); transition: all 0.15s; }
+  .nav-links a:hover { background: var(--bg2); color: var(--text); border-color: var(--border2); }
+
+  /* HERO */
+  .hero {
+    padding: 72px 48px 64px; max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+  }
+  .hero-eyebrow { font-size: 13px; color: var(--text3); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--purple); }
+  .hero-titles { margin-bottom: 24px; }
+  .pill-title { display: inline-block; font-size: clamp(32px, 5vw, 52px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 8px; }
+  .pill-black { background: var(--black); color: #fff; padding: 4px 20px; border-radius: var(--radius-pill); display: block; width: fit-content; }
+  .pill-outline { background: transparent; color: var(--black); padding: 4px 20px; border-radius: var(--radius-pill); border: 2.5px solid var(--black); display: block; width: fit-content; }
+  .pill-purple { background: var(--purple); color: #fff; padding: 4px 20px; border-radius: var(--radius-pill); display: block; width: fit-content; }
+  .hero-desc { font-size: 16px; color: var(--text2); max-width: 480px; line-height: 1.7; margin-bottom: 32px; }
+  .hero-meta { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .meta-item { flex: 1; padding: 14px 16px; border-right: 1px solid var(--border); }
+  .meta-item:last-child { border-right: none; }
+  .meta-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+  .meta-val { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  /* Hero visual */
+  .hero-visual { display: flex; align-items: center; justify-content: center; position: relative; height: 380px; }
+  .visual-blob { width: 360px; height: 360px; border-radius: 45% 55% 40% 60%; background: linear-gradient(135deg, #c8b8f8 0%, #b8f0d8 50%, #c8e0f8 100%); opacity: 0.5; animation: morph 8s ease-in-out infinite; position: relative; }
+  .visual-blob::after { content: ''; position: absolute; inset: 20px; border-radius: 55% 45% 60% 40%; background: linear-gradient(135deg, #a090f0 0%, #90e8c0 100%); opacity: 0.7; animation: morph 6s ease-in-out infinite reverse; }
+  @keyframes morph { 0%,100%{border-radius:45% 55% 40% 60%} 33%{border-radius:60% 40% 55% 45%} 66%{border-radius:40% 60% 45% 55%} }
+  .visual-stats { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+  .stat-pill { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.8); border-radius: var(--radius-pill); padding: 8px 20px; font-weight: 700; font-size: 14px; color: var(--black); box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .stat-pill span { color: var(--purple); }
+
+  /* SECTIONS */
+  .section-wrap { max-width: 1200px; margin: 0 auto; padding: 64px 48px; }
+  .section-wrap + .section-wrap { padding-top: 0; }
+  hr { border: none; border-top: 1px solid var(--border); max-width: 1200px; margin: 0 auto; }
+  .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-eyebrow::after { content: ''; flex: 1; max-width: 48px; height: 1px; background: var(--border2); }
+  h2 { font-size: 36px; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 16px; line-height: 1.1; }
+  h2 + p.lead { font-size: 16px; color: var(--text2); max-width: 720px; margin-bottom: 32px; line-height: 1.7; }
+  h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .card:hover { border-color: var(--border2); box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+  .card p { font-size: 14px; color: var(--text2); line-height: 1.65; }
+  .card-green { border-top: 3px solid var(--green); }
+  .card-purple { border-top: 3px solid var(--purple); }
+  .card-blue { border-top: 3px solid var(--blue); }
+  .card-orange { border-top: 3px solid var(--orange); }
+
+  /* ALGO CARDS */
+  .algo-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s; background: var(--bg); display: flex; flex-direction: column; }
+  .algo-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .algo-header { padding: 20px 24px; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+  .algo-header.green { background: var(--green-light); color: #0a5a3a; border-bottom: 1px solid var(--green-border); }
+  .algo-header.purple { background: var(--purple-light); color: #4a2ab0; border-bottom: 1px solid var(--purple-border); }
+  .algo-header.blue { background: var(--blue-light); color: #1a5a9a; border-bottom: 1px solid var(--blue-border); }
+  .algo-header.orange { background: var(--orange-light); color: #9a4a1a; border-bottom: 1px solid var(--orange-border); }
+  .algo-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; opacity: 0.7; }
+  .algo-body { padding: 20px 24px; flex: 1; display: flex; flex-direction: column; }
+  .algo-body p { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 12px; }
+  .algo-body .formula { background: var(--bg3); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); margin: 10px 0; overflow-x: auto; white-space: nowrap; }
+  .algo-meta { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin: 14px 0 8px; }
+  .algo-links { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 6px; }
+  .link-pill {
+    font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-pill);
+    text-decoration: none; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px;
+    border: 1px solid var(--border); color: var(--text2); background: var(--bg);
+  }
+  .link-pill:hover { border-color: var(--border2); background: var(--bg2); color: var(--text); }
+  .link-pill.doc { color: var(--purple); border-color: var(--purple-border); background: var(--purple-light); }
+  .link-pill.doc:hover { background: #e0d8ff; }
+  .link-pill.paper { color: var(--green); border-color: var(--green-border); background: var(--green-light); }
+  .link-pill.paper:hover { background: #d0f4e0; }
+  .link-pill.wiki { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+  .link-pill.wiki:hover { background: #d0e8ff; }
+  .link-pill::after { content: '↗'; font-size: 10px; opacity: 0.7; }
+
+  /* SVG figure */
+  .algo-figure { background: var(--bg2); border-radius: 8px; padding: 16px; margin: 12px 0; border: 1px solid var(--border); }
+  .algo-figure svg { display: block; width: 100%; height: auto; }
+  .algo-figure .caption { font-size: 11px; color: var(--text3); text-align: center; margin-top: 8px; }
+
+  /* CODE BLOCK */
+  .code-block { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8; margin: 12px 0; overflow-x: auto; }
+  .kw { color: var(--purple); } .fn { color: #0a7a5a; } .st { color: #c05000; } .cm { color: var(--text3); }
+
+  /* TABLE */
+  .table-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 10px 16px; background: var(--bg2); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); border-bottom: 1px solid var(--border); }
+  td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg2); }
+  .col-code { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--purple); font-weight: 600; }
+  .col-code-green { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--green); font-weight: 600; }
+  .range-pill { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); padding: 2px 10px; border-radius: var(--radius-pill); display: inline-block; font-weight: 600; }
+  .range-pill-purple { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); padding: 2px 10px; border-radius: var(--radius-pill); display: inline-block; font-weight: 600; }
+  .range-pill-blue { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); padding: 2px 10px; border-radius: var(--radius-pill); display: inline-block; font-weight: 600; }
+
+  /* PIPELINE BLOCK */
+  .pipeline-box { background: linear-gradient(135deg, #f7f7f8 0%, #f0edff 100%); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; margin: 24px 0; }
+  .pipeline-steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 24px; }
+  .pipe-step { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: all 0.2s; }
+  .pipe-step:hover { border-color: var(--purple-border); box-shadow: 0 4px 16px rgba(123,92,240,0.08); }
+  .pipe-step .pipe-n { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3); margin-bottom: 8px; font-weight: 600; }
+  .pipe-step h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .pipe-step p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .pipe-step.accent { background: var(--purple); border-color: var(--purple); }
+  .pipe-step.accent .pipe-n { color: rgba(255,255,255,0.7); }
+  .pipe-step.accent h4 { color: #fff; }
+  .pipe-step.accent p { color: rgba(255,255,255,0.85); }
+
+  /* TIP */
+  .tip { border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; background: var(--bg); }
+  .tip-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+  .tip p { font-size: 13px; color: var(--text2); line-height: 1.65; }
+  .tip strong { color: var(--text); }
+
+  /* REFERENCES */
+  .references-section ol { padding-left: 20px; }
+  .references-section li { font-size: 14px; color: var(--text2); margin-bottom: 10px; line-height: 1.7; }
+  .references-section li em { color: var(--text); font-style: italic; }
+  .references-section li a { color: var(--purple); text-decoration: none; font-weight: 500; }
+  .references-section li a:hover { text-decoration: underline; }
+
+  footer { border-top: 1px solid var(--border); padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; color: var(--text3); font-size: 13px; }
+  footer a { color: var(--text3); text-decoration: none; transition: color 0.15s; }
+  footer a:hover { color: var(--purple); }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; } .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 80px 20px 48px; } .hero-visual { display: none; }
+    .section-wrap { padding: 48px 20px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .pipeline-steps { grid-template-columns: 1fr 1fr; }
+    .pipeline-box { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">КАРТА МЕТОДОВ<span>ML · ВЭУ · 2025</span></div>
+  <div class="nav-links">
+    <a href="#preprocessing">Препроцессинг</a>
+    <a href="#eda">EDA</a>
+    <a href="#balance">Балансировка</a>
+    <a href="#models">Модели</a>
+    <a href="#validation">Валидация</a>
+    <a href="#metrics">Метрики</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Учебный справочник · Предиктивная аналитика ВЭУ</div>
+    <div class="hero-titles">
+      <div class="pill-title pill-black">Карта</div>
+      <div class="pill-title pill-outline">методов</div>
+      <div class="pill-title pill-purple">проекта</div>
+    </div>
+    <p class="hero-desc">
+      Систематический разбор всех методов машинного обучения, использованных
+      в проекте классификации режимов отказа ветроэнергетической установки —
+      от предобработки и EDA до интерпретации модели.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Методов</div><div class="meta-val">20+ инструментов</div></div>
+      <div class="meta-item"><div class="meta-label">Модели</div><div class="meta-val">LightGBM · DT</div></div>
+      <div class="meta-item"><div class="meta-label">Классы</div><div class="meta-val">6 типов отказов</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="visual-blob"></div>
+    <div class="visual-stats">
+      <div class="stat-pill"><span>7</span> этапов конвейера</div>
+      <div class="stat-pill"><span>3</span> группы метрик</div>
+      <div class="stat-pill">scikit-learn + <span>LightGBM</span></div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ОБЗОР КОНВЕЙЕРА -->
+<div class="section-wrap" id="pipeline-overview">
+  <div class="section-eyebrow">Конвейер</div>
+  <h2>Общая структура проекта</h2>
+  <p class="lead">
+    Все методы складываются в единый конвейер от сырых SCADA-данных до диагностики
+    типа отказа. Каждый этап решает свою задачу, и результат каждого этапа влияет на следующий.
+  </p>
+
+  <div class="pipeline-box">
+    <div class="pipeline-steps">
+      <div class="pipe-step">
+        <div class="pipe-n">01</div>
+        <h4>Сырые данные</h4>
+        <p>SCADA + журналы отказов и статусов</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-n">02</div>
+        <h4>Препроцессинг</h4>
+        <p>merge_asof, очистка, StandardScaler</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-n">03</div>
+        <h4>EDA</h4>
+        <p>Корреляции, выбросы, кривая мощности</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-n">04</div>
+        <h4>Балансировка</h4>
+        <p>SMOTE + undersample в pipeline</p>
+      </div>
+      <div class="pipe-step accent">
+        <div class="pipe-n">05</div>
+        <h4>Обучение</h4>
+        <p>LightGBM + GridSearchCV</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-n">06</div>
+        <h4>Оценка</h4>
+        <p>Per-class F1, ROC, PR, CM</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- I. ПРЕПРОЦЕССИНГ -->
+<div class="section-wrap" id="preprocessing">
+  <div class="section-eyebrow">I · Препроцессинг</div>
+  <h2>Подготовка данных</h2>
+  <p class="lead">
+    Любой ML-проект начинается с приведения данных к виду, пригодному для алгоритмов.
+    В нашем случае — объединение трёх разнородных источников SCADA-телеметрии,
+    журнала отказов и журнала статусов с разными временными шкалами.
+  </p>
+
+  <div class="grid-2" style="margin-bottom: 16px;">
+
+    <!-- merge_asof -->
+    <div class="algo-card">
+      <div class="algo-header green">
+        merge_asof
+        <span class="algo-tag">pandas</span>
+      </div>
+      <div class="algo-body">
+        <p>Нечёткое объединение временных рядов по <strong>ближайшему</strong> времени с допуском <code>tolerance</code>. В отличие от обычного <code>merge</code>, не требует точного совпадения временных меток.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <line x1="60" y1="40" x2="430" y2="40" stroke="#0a0a0f" stroke-width="1.5"/>
+            <text x="55" y="44" font-size="10" fill="#555560" text-anchor="end" font-weight="600">SCADA</text>
+            <g fill="#0a0a0f">
+              <circle cx="80"  cy="40" r="4"/><circle cx="115" cy="40" r="4"/>
+              <circle cx="150" cy="40" r="4"/><circle cx="185" cy="40" r="4"/>
+              <circle cx="220" cy="40" r="4"/><circle cx="255" cy="40" r="4"/>
+              <circle cx="290" cy="40" r="4"/><circle cx="325" cy="40" r="4"/>
+              <circle cx="360" cy="40" r="4"/><circle cx="395" cy="40" r="4"/>
+            </g>
+            <line x1="60" y1="100" x2="430" y2="100" stroke="#7B5CF0" stroke-width="1.5"/>
+            <text x="55" y="104" font-size="10" fill="#555560" text-anchor="end" font-weight="600">Fault</text>
+            <rect x="172" y="93" width="6" height="14" fill="#7B5CF0"/>
+            <rect x="295" y="93" width="6" height="14" fill="#7B5CF0"/>
+            <g stroke="#7B5CF0" stroke-width="1" stroke-dasharray="3,2" opacity="0.7">
+              <line x1="175" y1="93" x2="185" y2="44"/>
+              <line x1="298" y1="93" x2="290" y2="44"/>
+            </g>
+            <rect x="165" y="30" width="35" height="20" fill="none" stroke="#7B5CF0" stroke-width="1" stroke-dasharray="2,2"/>
+            <text x="182" y="22" font-size="9" fill="#7B5CF0" text-anchor="middle">tolerance=10мин</text>
+          </svg>
+          <div class="caption">Каждое событие отказа связывается с ближайшей записью SCADA</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://pandas.pydata.org/docs/reference/api/pandas.merge_asof.html" target="_blank">pandas docs</a>
+          <a class="link-pill wiki" href="https://pandas.pydata.org/docs/user_guide/merging.html#merging-merge-asof" target="_blank">user guide</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- StandardScaler -->
+    <div class="algo-card">
+      <div class="algo-header purple">
+        StandardScaler
+        <span class="algo-tag">scikit-learn</span>
+      </div>
+      <div class="algo-body">
+        <p>Z-score стандартизация: каждый признак преобразуется к среднему 0 и дисперсии 1. Обязательно для линейных моделей, kNN, нейросетей; для деревьев формально не требуется, но даёт устойчивость.</p>
+
+        <div class="formula" style="background: var(--bg3); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 10px 0;">
+          x' = (x − μ) / σ
+        </div>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <text x="80" y="18" font-size="11" font-weight="700" text-anchor="middle" fill="#0a0a0f">ДО</text>
+            <line x1="20" y1="110" x2="170" y2="110" stroke="#0a0a0f" stroke-width="1"/>
+            <g fill="#0a0a0f" opacity="0.7">
+              <rect x="30" y="90" width="10" height="20"/><rect x="42" y="70" width="10" height="40"/>
+              <rect x="54" y="40" width="10" height="70"/><rect x="66" y="50" width="10" height="60"/>
+              <rect x="78" y="70" width="10" height="40"/><rect x="90" y="90" width="10" height="20"/>
+            </g>
+            <g fill="#7B5CF0" opacity="0.7">
+              <rect x="120" y="100" width="6" height="10"/><rect x="128" y="90" width="6" height="20"/>
+              <rect x="136" y="80" width="6" height="30"/><rect x="144" y="90" width="6" height="20"/>
+              <rect x="152" y="100" width="6" height="10"/>
+            </g>
+            <text x="60" y="128" font-size="9" fill="#9090a0">Темп. (0..80°C)</text>
+            <text x="140" y="128" font-size="9" fill="#9090a0" text-anchor="middle">Угол (0..1)</text>
+
+            <line x1="200" y1="70" x2="245" y2="70" stroke="#0a0a0f" stroke-width="2" marker-end="url(#arr-ss)"/>
+            <defs><marker id="arr-ss" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#0a0a0f"/></marker></defs>
+
+            <text x="370" y="18" font-size="11" font-weight="700" text-anchor="middle" fill="#0a0a0f">ПОСЛЕ</text>
+            <line x1="280" y1="110" x2="440" y2="110" stroke="#0a0a0f" stroke-width="1"/>
+            <g fill="#0a0a0f" opacity="0.7">
+              <rect x="305" y="80" width="10" height="30"/><rect x="317" y="60" width="10" height="50"/>
+              <rect x="329" y="40" width="10" height="70"/><rect x="341" y="50" width="10" height="60"/>
+              <rect x="353" y="70" width="10" height="40"/>
+            </g>
+            <g fill="#7B5CF0" opacity="0.7">
+              <rect x="365" y="75" width="10" height="35"/><rect x="377" y="55" width="10" height="55"/>
+              <rect x="389" y="45" width="10" height="65"/><rect x="401" y="65" width="10" height="45"/>
+              <rect x="413" y="80" width="10" height="30"/>
+            </g>
+            <text x="360" y="128" font-size="9" fill="#9090a0" text-anchor="middle">оба признака: μ=0, σ=1</text>
+          </svg>
+          <div class="caption">Признаки разного масштаба после Z-нормализации становятся сопоставимы</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html" target="_blank">sklearn docs</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Standard_score" target="_blank">Wikipedia</a>
+          <a class="link-pill wiki" href="https://scikit-learn.org/stable/modules/preprocessing.html#standardization-or-mean-removal-and-variance-scaling" target="_blank">user guide</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Дополнительные методы препроцессинга в таблице -->
+  <h3 style="margin-top: 36px; font-size: 18px;">Также применяются</h3>
+  <div class="table-wrap" style="margin-top: 12px;">
+    <table>
+      <thead>
+        <tr><th>Метод</th><th>Назначение</th><th>Материал</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="col-code">LabelEncoder</span></td>
+          <td>Кодирование строковых меток (GF, EF, …) в целые числа</td>
+          <td><a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html" target="_blank">sklearn docs</a></td>
+        </tr>
+        <tr>
+          <td><span class="col-code">label_binarize</span></td>
+          <td>One-hot кодирование меток для multiclass ROC / PR кривых</td>
+          <td><a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.label_binarize.html" target="_blank">sklearn docs</a></td>
+        </tr>
+        <tr>
+          <td><strong>Random Undersampling</strong></td>
+          <td>Случайная подвыборка мажоритарного класса <span class="col-code">NF</span> до 300 объектов</td>
+          <td><a class="link-pill paper" href="https://imbalanced-learn.org/stable/under_sampling.html" target="_blank">imblearn guide</a></td>
+        </tr>
+        <tr>
+          <td><strong>Удаление leakage-признаков</strong></td>
+          <td>Исключение признаков-следствий отказа (мощность, выработка, часы работы)</td>
+          <td><a class="link-pill wiki" href="https://machinelearningmastery.com/data-leakage-machine-learning/" target="_blank">обзор</a></td>
+        </tr>
+        <tr>
+          <td><strong>dayfirst=True</strong></td>
+          <td>Корректная интерпретация европейского формата даты DD/MM/YYYY</td>
+          <td><a class="link-pill doc" href="https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html" target="_blank">pandas docs</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- II. EDA -->
+<div class="section-wrap" id="eda">
+  <div class="section-eyebrow">II · Разведочный анализ</div>
+  <h2>Понять структуру данных</h2>
+  <p class="lead">
+    EDA отвечает на ключевые вопросы перед моделированием: каковы распределения,
+    есть ли выбросы, как признаки коррелируют между собой, есть ли физически
+    интерпретируемые различия между классами отказов.
+  </p>
+
+  <div class="grid-2" style="margin-bottom: 16px;">
+
+    <!-- IQR -->
+    <div class="algo-card">
+      <div class="algo-header blue">
+        Правило межквартильного размаха (IQR)
+        <span class="algo-tag">статистика</span>
+      </div>
+      <div class="algo-body">
+        <p>Непараметрический метод поиска выбросов — не требует нормальности распределения. Точки вне интервала [Q₁ − k·IQR, Q₃ + k·IQR] помечаются как потенциальные выбросы. Стандарт <strong>k = 1.5</strong> (правило Тьюки); для физических величин с тяжёлыми хвостами берут <strong>k = 3.0</strong>.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <line x1="40" y1="80" x2="430" y2="80" stroke="#0a0a0f" stroke-width="1"/>
+            <line x1="100" y1="80" x2="170" y2="80" stroke="#0a0a0f" stroke-width="1"/>
+            <line x1="100" y1="70" x2="100" y2="90" stroke="#0a0a0f" stroke-width="1.5"/>
+            <line x1="290" y1="70" x2="290" y2="90" stroke="#0a0a0f" stroke-width="1.5"/>
+            <line x1="290" y1="80" x2="370" y2="80" stroke="#0a0a0f" stroke-width="1"/>
+            <rect x="170" y="60" width="120" height="40" fill="#7B5CF0" stroke="#0a0a0f" stroke-width="1.5" opacity="0.25"/>
+            <line x1="220" y1="60" x2="220" y2="100" stroke="#0a0a0f" stroke-width="2"/>
+            <text x="170" y="52" font-size="10" fill="#0a0a0f" text-anchor="middle" font-weight="600">Q₁</text>
+            <text x="220" y="52" font-size="10" fill="#0a0a0f" text-anchor="middle" font-weight="700">медиана</text>
+            <text x="290" y="52" font-size="10" fill="#0a0a0f" text-anchor="middle" font-weight="600">Q₃</text>
+            <line x1="170" y1="115" x2="290" y2="115" stroke="#555560" stroke-width="1"/>
+            <text x="230" y="128" font-size="10" fill="#555560" text-anchor="middle">IQR = Q₃ − Q₁</text>
+            <circle cx="60" cy="80" r="4" fill="none" stroke="#e87930" stroke-width="1.5"/>
+            <circle cx="405" cy="80" r="4" fill="none" stroke="#e87930" stroke-width="1.5"/>
+            <circle cx="420" cy="80" r="4" fill="none" stroke="#e87930" stroke-width="1.5"/>
+            <text x="60" y="64" font-size="9" fill="#e87930" text-anchor="middle" font-weight="600">выброс</text>
+          </svg>
+          <div class="caption">Анатомия boxplot: правило Тьюки 1.5·IQR</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Interquartile_range" target="_blank">Wikipedia: IQR</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Box_plot" target="_blank">Wikipedia: Box plot</a>
+          <a class="link-pill doc" href="https://seaborn.pydata.org/generated/seaborn.boxplot.html" target="_blank">seaborn boxplot</a>
+          <a class="link-pill paper" href="https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm" target="_blank">NIST handbook</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Корреляция + кластеризация -->
+    <div class="algo-card">
+      <div class="algo-header blue">
+        Корреляция Пирсона + иерархическая кластеризация
+        <span class="algo-tag">статистика</span>
+      </div>
+      <div class="algo-body">
+        <p>Корреляция Пирсона измеряет линейную связь признаков. Иерархическая кластеризация группирует коррелированные каналы — это выявляет датчики одной подсистемы.</p>
+
+        <div class="formula" style="background: var(--bg3); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 10px 0;">
+          r<sub>X,Y</sub> = cov(X, Y) / (σ<sub>X</sub> · σ<sub>Y</sub>) ∈ [−1, 1]
+        </div>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <g stroke="#0a0a0f" stroke-width="1.5" fill="none">
+              <line x1="60" y1="120" x2="60" y2="100"/><line x1="100" y1="120" x2="100" y2="100"/>
+              <line x1="140" y1="120" x2="140" y2="90"/><line x1="180" y1="120" x2="180" y2="90"/>
+              <line x1="240" y1="120" x2="240" y2="80"/><line x1="280" y1="120" x2="280" y2="80"/>
+              <line x1="340" y1="120" x2="340" y2="60"/><line x1="380" y1="120" x2="380" y2="60"/>
+              <line x1="420" y1="120" x2="420" y2="40"/>
+              <line x1="60" y1="100" x2="100" y2="100"/><line x1="80" y1="100" x2="80" y2="80"/>
+              <line x1="140" y1="90" x2="180" y2="90"/><line x1="160" y1="90" x2="160" y2="70"/>
+              <line x1="80" y1="80" x2="160" y2="80"/>
+              <path d="M 80 80 L 80 50 M 160 70 L 160 50 M 80 50 L 160 50 M 120 50 L 120 20"/>
+              <line x1="240" y1="80" x2="280" y2="80"/><line x1="260" y1="80" x2="260" y2="60"/>
+              <line x1="340" y1="60" x2="380" y2="60"/><line x1="360" y1="60" x2="360" y2="40"/>
+              <line x1="360" y1="40" x2="420" y2="40"/>
+              <path d="M 390 40 L 390 20 M 260 60 L 260 30 M 390 30 L 260 30 M 325 30 L 325 20 M 120 20 L 325 20"/>
+            </g>
+            <line x1="40" y1="52" x2="440" y2="52" stroke="#7B5CF0" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="440" y="48" font-size="9" fill="#7B5CF0" text-anchor="end" font-weight="600">|r| ≈ 0.7</text>
+            <g font-size="9" fill="#555560" text-anchor="middle">
+              <text x="60" y="135">T1</text><text x="100" y="135">T2</text>
+              <text x="140" y="135">T3</text><text x="180" y="135">T4</text>
+              <text x="240" y="135">P1</text><text x="280" y="135">P2</text>
+              <text x="340" y="135">V1</text><text x="380" y="135">V2</text>
+              <text x="420" y="135">ω</text>
+            </g>
+          </svg>
+          <div class="caption">Дендрограмма: T₁..T₄ — температурный кластер</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient" target="_blank">Wikipedia: Pearson</a>
+          <a class="link-pill doc" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.corr.html" target="_blank">pandas.corr</a>
+          <a class="link-pill doc" href="https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html" target="_blank">scipy.hierarchy</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Hierarchical_clustering" target="_blank">Wikipedia: Hierarchical</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 36px; font-size: 18px;">Прочие EDA-инструменты</h3>
+  <div class="table-wrap" style="margin-top: 12px;">
+    <table>
+      <thead>
+        <tr><th>Инструмент</th><th>Назначение</th><th>Материал</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>missingno</strong></td>
+          <td>Визуализация структуры пропущенных значений в виде матрицы</td>
+          <td><a class="link-pill doc" href="https://github.com/ResidentMario/missingno" target="_blank">GitHub</a></td>
+        </tr>
+        <tr>
+          <td><strong>Boxplot / violinplot</strong></td>
+          <td>Сравнение распределений признака по классам</td>
+          <td><a class="link-pill doc" href="https://seaborn.pydata.org/generated/seaborn.violinplot.html" target="_blank">seaborn violin</a></td>
+        </tr>
+        <tr>
+          <td><strong>Heatmap z-score</strong></td>
+          <td>«Подписи» классов отказов в нормализованных средних</td>
+          <td><a class="link-pill doc" href="https://seaborn.pydata.org/generated/seaborn.heatmap.html" target="_blank">seaborn heatmap</a></td>
+        </tr>
+        <tr>
+          <td><strong>Resample / aggregate</strong></td>
+          <td>Агрегация временных рядов: <span class="col-code">'W'</span> неделя, <span class="col-code">'M'</span> месяц</td>
+          <td><a class="link-pill doc" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.resample.html" target="_blank">pandas resample</a></td>
+        </tr>
+        <tr>
+          <td><strong>Empirical Power Curve</strong></td>
+          <td>Кривая мощности — индустриальный стандарт диагностики ВЭУ</td>
+          <td><a class="link-pill paper" href="https://webstore.iec.ch/publication/26603" target="_blank">IEC 61400-12-1</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- III. БАЛАНСИРОВКА -->
+<div class="section-wrap" id="balance">
+  <div class="section-eyebrow">III · Балансировка классов</div>
+  <h2>Когда отказов меньше, чем нормы</h2>
+  <p class="lead">
+    В исходных данных класс «нормальный режим» (NF) встречается в десятки раз чаще,
+    чем любой класс отказа. Без балансировки модель «выгодно» научиться всегда
+    предсказывать NF — формальная точность высока, но детектировать отказы такая модель не сможет.
+  </p>
+
+  <div class="grid-2" style="margin-bottom: 16px;">
+
+    <!-- SMOTE -->
+    <div class="algo-card">
+      <div class="algo-header purple">
+        SMOTE
+        <span class="algo-tag">imbalanced-learn</span>
+      </div>
+      <div class="algo-body">
+        <p><strong>Synthetic Minority Over-sampling Technique</strong> — генерирует синтетические объекты миноритарного класса через линейную интерполяцию между существующим объектом и одним из его k ближайших соседей того же класса. В отличие от простого дублирования, создаёт новые точки в пространстве признаков.</p>
+
+        <div class="formula" style="background: var(--bg3); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 10px 0;">
+          x<sub>new</sub> = x<sub>i</sub> + λ·(x<sub>nn</sub> − x<sub>i</sub>), λ ∼ U(0, 1)
+        </div>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 160" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <text x="80" y="14" font-size="10" font-weight="700" text-anchor="middle" fill="#0a0a0f">ДО SMOTE</text>
+            <rect x="20" y="22" width="120" height="120" fill="white" stroke="#0a0a0f" stroke-width="0.5"/>
+            <g fill="#0a0a0f" opacity="0.4">
+              <circle cx="35" cy="40" r="3"/><circle cx="50" cy="55" r="3"/><circle cx="65" cy="38" r="3"/>
+              <circle cx="80" cy="52" r="3"/><circle cx="95" cy="35" r="3"/><circle cx="110" cy="50" r="3"/>
+              <circle cx="125" cy="42" r="3"/><circle cx="40" cy="70" r="3"/><circle cx="55" cy="85" r="3"/>
+              <circle cx="70" cy="75" r="3"/><circle cx="85" cy="82" r="3"/><circle cx="100" cy="72" r="3"/>
+              <circle cx="115" cy="80" r="3"/><circle cx="45" cy="100" r="3"/><circle cx="60" cy="112" r="3"/>
+              <circle cx="75" cy="100" r="3"/><circle cx="105" cy="108" r="3"/><circle cx="120" cy="100" r="3"/>
+            </g>
+            <g fill="#7B5CF0">
+              <circle cx="75" cy="125" r="4"/><circle cx="100" cy="132" r="4"/><circle cx="88" cy="138" r="4"/>
+            </g>
+
+            <line x1="155" y1="80" x2="195" y2="80" stroke="#0a0a0f" stroke-width="2" marker-end="url(#arr-sm)"/>
+            <defs><marker id="arr-sm" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#0a0a0f"/></marker></defs>
+            <text x="175" y="72" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#7B5CF0" font-weight="600">SMOTE</text>
+
+            <text x="280" y="14" font-size="10" font-weight="700" text-anchor="middle" fill="#0a0a0f">ПОСЛЕ SMOTE</text>
+            <rect x="220" y="22" width="120" height="120" fill="white" stroke="#0a0a0f" stroke-width="0.5"/>
+            <g fill="#0a0a0f" opacity="0.4">
+              <circle cx="235" cy="40" r="3"/><circle cx="250" cy="55" r="3"/><circle cx="265" cy="38" r="3"/>
+              <circle cx="280" cy="52" r="3"/><circle cx="295" cy="35" r="3"/><circle cx="310" cy="50" r="3"/>
+              <circle cx="325" cy="42" r="3"/><circle cx="240" cy="70" r="3"/><circle cx="255" cy="85" r="3"/>
+              <circle cx="270" cy="75" r="3"/><circle cx="285" cy="82" r="3"/><circle cx="300" cy="72" r="3"/>
+              <circle cx="315" cy="80" r="3"/><circle cx="245" cy="100" r="3"/><circle cx="260" cy="112" r="3"/>
+              <circle cx="275" cy="100" r="3"/><circle cx="305" cy="108" r="3"/><circle cx="320" cy="100" r="3"/>
+            </g>
+            <g stroke="#7B5CF0" stroke-width="0.6" stroke-dasharray="2,2" opacity="0.5">
+              <line x1="275" y1="125" x2="300" y2="132"/>
+              <line x1="300" y1="132" x2="288" y2="138"/>
+              <line x1="275" y1="125" x2="288" y2="138"/>
+            </g>
+            <g fill="#7B5CF0">
+              <circle cx="275" cy="125" r="4"/><circle cx="300" cy="132" r="4"/><circle cx="288" cy="138" r="4"/>
+            </g>
+            <g fill="#c8b8f8" stroke="#7B5CF0" stroke-width="1">
+              <circle cx="285" cy="128" r="3.5"/><circle cx="295" cy="135" r="3.5"/>
+              <circle cx="280" cy="131" r="3.5"/><circle cx="293" cy="125" r="3.5"/>
+              <circle cx="282" cy="136" r="3.5"/><circle cx="290" cy="130" r="3.5"/>
+            </g>
+
+            <g transform="translate(360, 35)" font-size="9">
+              <circle cx="0" cy="0" r="3" fill="#0a0a0f" opacity="0.4"/>
+              <text x="8" y="3" fill="#0a0a0f" opacity="0.6">мажор.</text>
+              <circle cx="0" cy="20" r="4" fill="#7B5CF0"/>
+              <text x="8" y="23" fill="#7B5CF0" font-weight="600">оригинал</text>
+              <circle cx="0" cy="40" r="3.5" fill="#c8b8f8" stroke="#7B5CF0"/>
+              <text x="8" y="43" fill="#7B5CF0">синтетика</text>
+            </g>
+          </svg>
+          <div class="caption">SMOTE интерполирует синтетические объекты на отрезках между ближайшими соседями</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill paper" href="https://www.jair.org/index.php/jair/article/view/10302" target="_blank">Chawla et al., JAIR 2002</a>
+          <a class="link-pill doc" href="https://imbalanced-learn.org/stable/references/generated/imblearn.over_sampling.SMOTE.html" target="_blank">imblearn docs</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis#SMOTE" target="_blank">Wikipedia</a>
+          <a class="link-pill wiki" href="https://machinelearningmastery.com/smote-oversampling-for-imbalanced-classification/" target="_blank">MLM туториал</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline + StratifiedKFold -->
+    <div class="algo-card">
+      <div class="algo-header purple">
+        imblearn.pipeline + StratifiedKFold
+        <span class="algo-tag">правильная схема</span>
+      </div>
+      <div class="algo-body">
+        <p><strong>Принципиально важная связка.</strong> SMOTE применяется <em>внутри</em> кросс-валидации, только к обучающим фолдам. Если применить SMOTE до разбиения, синтетические объекты «протекут» в валидационный фолд и завысят оценку качества.</p>
+
+        <div class="code-block">
+          <span class="kw">from</span> imblearn.pipeline <span class="kw">import</span> make_pipeline<br>
+          <span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> StratifiedKFold<br><br>
+          pipe = make_pipeline(<br>
+          &nbsp;&nbsp;<span class="fn">SMOTE</span>(random_state=42),<br>
+          &nbsp;&nbsp;<span class="fn">StandardScaler</span>(),<br>
+          &nbsp;&nbsp;<span class="fn">LGBMClassifier</span>()<br>
+          )<br>
+          cv = <span class="fn">StratifiedKFold</span>(n_splits=5, shuffle=<span class="kw">True</span>)
+        </div>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <text x="20" y="14" font-size="10" font-weight="700" fill="#0a0a0f">5-fold Stratified CV</text>
+            <g font-size="9" fill="#9090a0">
+              <text x="20" y="36">fold 1</text><text x="20" y="58">fold 2</text>
+              <text x="20" y="80">fold 3</text><text x="20" y="102">fold 4</text>
+              <text x="20" y="124">fold 5</text>
+            </g>
+            <g>
+              <rect x="60" y="28" width="40" height="14" fill="#7B5CF0"/>
+              <rect x="100" y="28" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="140" y="28" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="180" y="28" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="220" y="28" width="40" height="14" fill="#e8e8ec"/>
+            </g>
+            <g>
+              <rect x="60" y="50" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="100" y="50" width="40" height="14" fill="#7B5CF0"/>
+              <rect x="140" y="50" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="180" y="50" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="220" y="50" width="40" height="14" fill="#e8e8ec"/>
+            </g>
+            <g>
+              <rect x="60" y="72" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="100" y="72" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="140" y="72" width="40" height="14" fill="#7B5CF0"/>
+              <rect x="180" y="72" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="220" y="72" width="40" height="14" fill="#e8e8ec"/>
+            </g>
+            <g>
+              <rect x="60" y="94" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="100" y="94" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="140" y="94" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="180" y="94" width="40" height="14" fill="#7B5CF0"/>
+              <rect x="220" y="94" width="40" height="14" fill="#e8e8ec"/>
+            </g>
+            <g>
+              <rect x="60" y="116" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="100" y="116" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="140" y="116" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="180" y="116" width="40" height="14" fill="#e8e8ec"/>
+              <rect x="220" y="116" width="40" height="14" fill="#7B5CF0"/>
+            </g>
+            <line x1="270" y1="75" x2="295" y2="75" stroke="#0a0a0f" stroke-width="1.5" marker-end="url(#arr-pipe)"/>
+            <defs><marker id="arr-pipe" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#0a0a0f"/></marker></defs>
+            <rect x="300" y="38" width="130" height="22" fill="white" stroke="#0a0a0f" stroke-width="1" rx="3"/>
+            <text x="365" y="52" text-anchor="middle" font-size="10" fill="#0a0a0f">SMOTE</text>
+            <rect x="300" y="64" width="130" height="22" fill="white" stroke="#0a0a0f" stroke-width="1" rx="3"/>
+            <text x="365" y="78" text-anchor="middle" font-size="10" fill="#0a0a0f">StandardScaler</text>
+            <rect x="300" y="90" width="130" height="22" fill="#7B5CF0" rx="3"/>
+            <text x="365" y="104" text-anchor="middle" font-size="10" fill="white" font-weight="700">LGBM Classifier</text>
+            <g font-size="9" fill="#555560">
+              <rect x="60" y="0" width="8" height="8" fill="#7B5CF0"/><text x="72" y="7">test</text>
+              <rect x="100" y="0" width="8" height="8" fill="#e8e8ec"/><text x="112" y="7">train (с SMOTE)</text>
+            </g>
+          </svg>
+          <div class="caption">SMOTE применяется только к train-фолду каждой итерации</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://imbalanced-learn.org/stable/references/generated/imblearn.pipeline.make_pipeline.html" target="_blank">imblearn pipeline</a>
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html" target="_blank">StratifiedKFold</a>
+          <a class="link-pill paper" href="https://imbalanced-learn.org/stable/common_pitfalls.html" target="_blank">Common pitfalls</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 36px; font-size: 18px;">Альтернативные методы балансировки</h3>
+  <div class="grid-3" style="margin-top: 12px;">
+    <div class="card">
+      <h3>BorderlineSMOTE</h3>
+      <p style="margin-bottom: 12px;">Синтез только для пограничных точек миноритарного класса.</p>
+      <a class="link-pill paper" href="https://link.springer.com/chapter/10.1007/11538059_91" target="_blank">Han et al., 2005</a>
+      <a class="link-pill doc" href="https://imbalanced-learn.org/stable/references/generated/imblearn.over_sampling.BorderlineSMOTE.html" target="_blank">imblearn docs</a>
+    </div>
+    <div class="card">
+      <h3>ADASYN</h3>
+      <p style="margin-bottom: 12px;">Адаптивно: больше синтеза для «трудных» миноритарных точек.</p>
+      <a class="link-pill paper" href="https://ieeexplore.ieee.org/document/4633969" target="_blank">He et al., 2008</a>
+      <a class="link-pill doc" href="https://imbalanced-learn.org/stable/references/generated/imblearn.over_sampling.ADASYN.html" target="_blank">imblearn docs</a>
+    </div>
+    <div class="card">
+      <h3>SMOTETomek</h3>
+      <p style="margin-bottom: 12px;">Комбинация oversampling и удаления зашумлённых граничных точек.</p>
+      <a class="link-pill doc" href="https://imbalanced-learn.org/stable/references/generated/imblearn.combine.SMOTETomek.html" target="_blank">imblearn docs</a>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- IV. МОДЕЛИ -->
+<div class="section-wrap" id="models">
+  <div class="section-eyebrow">IV · Модели</div>
+  <h2>Базовая модель и продвинутая</h2>
+  <p class="lead">
+    В работе сравниваются две модели: простое решающее дерево как базовая линия и LightGBM —
+    современный градиентный бустинг, ставший де-факто стандартом для табличных задач.
+  </p>
+
+  <!-- Decision Tree -->
+  <div class="algo-card" style="margin-bottom: 16px;">
+    <div class="algo-header blue">
+      Decision Tree
+      <span class="algo-tag">базовая модель · scikit-learn</span>
+    </div>
+    <div class="algo-body">
+      <p>Иерархическая последовательность пороговых разбиений признакового пространства. На каждом узле выбирается признак и порог, максимизирующие чистоту разбиения по критерию Джини.</p>
+
+      <div class="formula" style="background: var(--bg3); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 10px 0;">
+        G = Σ p<sub>k</sub>·(1 − p<sub>k</sub>), где p<sub>k</sub> — доля класса k в узле
+      </div>
+
+      <div class="algo-figure">
+        <svg viewBox="0 0 580 220" xmlns="http://www.w3.org/2000/svg" font-family="Inter" font-size="11">
+          <rect x="240" y="20" width="100" height="36" fill="#0a0a0f" rx="6"/>
+          <text x="290" y="36" text-anchor="middle" fill="white" font-weight="700">P &lt; 50 кВт?</text>
+          <text x="290" y="49" text-anchor="middle" fill="white" font-size="9" opacity="0.7">gini = 0.83</text>
+
+          <line x1="270" y1="56" x2="170" y2="90" stroke="#0a0a0f" stroke-width="1.5"/>
+          <text x="200" y="76" font-size="9" fill="#9090a0">да</text>
+          <line x1="310" y1="56" x2="410" y2="90" stroke="#0a0a0f" stroke-width="1.5"/>
+          <text x="378" y="76" font-size="9" fill="#9090a0">нет</text>
+
+          <rect x="120" y="90" width="100" height="36" fill="white" stroke="#0a0a0f" stroke-width="1.5" rx="6"/>
+          <text x="170" y="108" text-anchor="middle">T₁ &lt; 25°C?</text>
+          <text x="170" y="121" text-anchor="middle" font-size="9" fill="#9090a0">gini = 0.45</text>
+
+          <rect x="360" y="90" width="100" height="36" fill="white" stroke="#0a0a0f" stroke-width="1.5" rx="6"/>
+          <text x="410" y="108" text-anchor="middle">Q &gt; 200 kVAr?</text>
+          <text x="410" y="121" text-anchor="middle" font-size="9" fill="#9090a0">gini = 0.62</text>
+
+          <line x1="150" y1="126" x2="80" y2="160" stroke="#0a0a0f" stroke-width="1.5"/>
+          <line x1="190" y1="126" x2="220" y2="160" stroke="#0a0a0f" stroke-width="1.5"/>
+          <line x1="390" y1="126" x2="360" y2="160" stroke="#0a0a0f" stroke-width="1.5"/>
+          <line x1="430" y1="126" x2="500" y2="160" stroke="#0a0a0f" stroke-width="1.5"/>
+
+          <rect x="30" y="160" width="100" height="40" fill="#7B5CF0" rx="6"/>
+          <text x="80" y="178" text-anchor="middle" fill="white" font-weight="700">GF</text>
+          <text x="80" y="192" text-anchor="middle" fill="white" font-size="9" opacity="0.85">n=42, чистый</text>
+
+          <rect x="170" y="160" width="100" height="40" fill="#e87930" rx="6"/>
+          <text x="220" y="178" text-anchor="middle" fill="white" font-weight="700">AF</text>
+          <text x="220" y="192" text-anchor="middle" fill="white" font-size="9" opacity="0.85">n=24</text>
+
+          <rect x="310" y="160" width="100" height="40" fill="#1DB87A" rx="6"/>
+          <text x="360" y="178" text-anchor="middle" fill="white" font-weight="700">EF</text>
+          <text x="360" y="192" text-anchor="middle" fill="white" font-size="9" opacity="0.85">n=58</text>
+
+          <rect x="450" y="160" width="100" height="40" fill="#2580d8" rx="6"/>
+          <text x="500" y="178" text-anchor="middle" fill="white" font-weight="700">NF</text>
+          <text x="500" y="192" text-anchor="middle" fill="white" font-size="9" opacity="0.85">n=90</text>
+        </svg>
+        <div class="caption">Структура дерева: корень → внутренние узлы → листья с классом</div>
+      </div>
+
+      <p><strong>Главное преимущество</strong> — полная интерпретируемость каждого предсказания. <strong>Главный недостаток</strong> — склонность к переобучению без ограничения глубины.</p>
+
+      <div class="algo-meta">Документация и материалы</div>
+      <div class="algo-links">
+        <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/tree.html" target="_blank">sklearn user guide</a>
+        <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html" target="_blank">DecisionTreeClassifier</a>
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Decision_tree_learning" target="_blank">Wikipedia</a>
+        <a class="link-pill paper" href="https://www.kdnuggets.com/2020/01/decision-tree-algorithm-explained.html" target="_blank">KDnuggets</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- LightGBM -->
+  <div class="algo-card">
+    <div class="algo-header orange">
+      LightGBM
+      <span class="algo-tag">Microsoft Research · продвинутая модель</span>
+    </div>
+    <div class="algo-body">
+      <p><strong>Light Gradient Boosting Machine</strong> — ансамбль деревьев решений, в котором каждое следующее дерево исправляет ошибки предыдущего ансамбля (gradient boosting). Итоговое предсказание — взвешенная сумма всех деревьев.</p>
+
+      <div class="formula" style="background: var(--bg3); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 10px 0;">
+        F(x) = Σ<sub>m=1..M</sub> α<sub>m</sub>·h<sub>m</sub>(x)
+      </div>
+
+      <div class="algo-figure">
+        <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+          <g font-size="10">
+            <g transform="translate(30, 40)">
+              <text x="40" y="-10" text-anchor="middle" font-size="11" font-weight="700" fill="#0a0a0f">h₁(x)</text>
+              <circle cx="40" cy="10" r="6" fill="#0a0a0f"/>
+              <line x1="35" y1="14" x2="20" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="45" y1="14" x2="60" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="20" cy="40" r="5" fill="#2580d8"/>
+              <circle cx="60" cy="40" r="5" fill="#0a0a0f"/>
+              <line x1="55" y1="44" x2="48" y2="65" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="65" y1="44" x2="74" y2="65" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="48" cy="68" r="5" fill="#e87930"/>
+              <circle cx="74" cy="68" r="5" fill="#7B5CF0"/>
+            </g>
+
+            <text x="135" y="80" font-size="22" font-weight="300" fill="#9090a0">+</text>
+
+            <g transform="translate(150, 40)">
+              <text x="40" y="-10" text-anchor="middle" font-size="11" font-weight="700" fill="#0a0a0f">α·h₂(x)</text>
+              <circle cx="40" cy="10" r="6" fill="#0a0a0f"/>
+              <line x1="35" y1="14" x2="20" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="45" y1="14" x2="60" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="20" cy="40" r="5" fill="#e87930"/>
+              <circle cx="60" cy="40" r="5" fill="#0a0a0f"/>
+              <line x1="55" y1="44" x2="48" y2="65" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="65" y1="44" x2="74" y2="65" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="48" cy="68" r="5" fill="#1DB87A"/>
+              <circle cx="74" cy="68" r="5" fill="#2580d8"/>
+            </g>
+
+            <text x="255" y="80" font-size="22" font-weight="300" fill="#9090a0">+</text>
+
+            <g transform="translate(270, 40)">
+              <text x="40" y="-10" text-anchor="middle" font-size="11" font-weight="700" fill="#0a0a0f">α·h₃(x)</text>
+              <circle cx="40" cy="10" r="6" fill="#0a0a0f"/>
+              <line x1="35" y1="14" x2="25" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="45" y1="14" x2="55" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="25" cy="40" r="5" fill="#7B5CF0"/>
+              <circle cx="55" cy="40" r="5" fill="#e87930"/>
+            </g>
+
+            <text x="350" y="80" font-size="20" font-weight="300" fill="#9090a0">+ ⋯ +</text>
+
+            <g transform="translate(415, 40)">
+              <text x="40" y="-10" text-anchor="middle" font-size="11" font-weight="700" fill="#0a0a0f">α·h<tspan baseline-shift="sub" font-size="7">M</tspan>(x)</text>
+              <circle cx="40" cy="10" r="6" fill="#0a0a0f"/>
+              <line x1="35" y1="14" x2="20" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="45" y1="14" x2="60" y2="35" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="20" cy="40" r="5" fill="#2580d8"/>
+              <circle cx="60" cy="40" r="5" fill="#0a0a0f"/>
+              <line x1="55" y1="44" x2="50" y2="65" stroke="#0a0a0f" stroke-width="1.2"/>
+              <line x1="65" y1="44" x2="72" y2="65" stroke="#0a0a0f" stroke-width="1.2"/>
+              <circle cx="50" cy="68" r="5" fill="#e87930"/>
+              <circle cx="72" cy="68" r="5" fill="#1DB87A"/>
+            </g>
+          </g>
+
+          <line x1="300" y1="140" x2="300" y2="170" stroke="#0a0a0f" stroke-width="1.5" marker-end="url(#arr-lgbm)"/>
+          <defs><marker id="arr-lgbm" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#0a0a0f"/></marker></defs>
+
+          <rect x="180" y="175" width="240" height="35" fill="#e87930" rx="8"/>
+          <text x="300" y="195" text-anchor="middle" fill="white" font-weight="700" font-size="13">F(x) = взвешенная сумма всех деревьев</text>
+        </svg>
+        <div class="caption">Каждое дерево учится исправлять ошибки ансамбля; финальное предсказание — линейная комбинация</div>
+      </div>
+
+      <p><strong>Ключевые особенности:</strong></p>
+      <ul style="font-size: 13px; color: var(--text2); padding-left: 20px; line-height: 1.7;">
+        <li><strong>Histogram-based learning</strong> — признаки дискретизируются в гистограммы (bins), радикально ускоряя обучение</li>
+        <li><strong>Leaf-wise tree growth</strong> — дерево растёт по листу с максимальным приростом, а не по уровням</li>
+        <li><strong>L1 / L2 регуляризация</strong> через параметры <span class="col-code">reg_alpha</span>, <span class="col-code">reg_lambda</span></li>
+        <li>Поддержка пропусков и категориальных признаков «из коробки»</li>
+      </ul>
+
+      <div class="algo-meta">Документация и материалы</div>
+      <div class="algo-links">
+        <a class="link-pill paper" href="https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree" target="_blank">Ke et al., NeurIPS 2017</a>
+        <a class="link-pill doc" href="https://lightgbm.readthedocs.io/" target="_blank">официальная документация</a>
+        <a class="link-pill doc" href="https://lightgbm.readthedocs.io/en/latest/Parameters-Tuning.html" target="_blank">Parameters tuning guide</a>
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/LightGBM" target="_blank">Wikipedia</a>
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Gradient_boosting" target="_blank">Gradient boosting</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- V. ВАЛИДАЦИЯ -->
+<div class="section-wrap" id="validation">
+  <div class="section-eyebrow">V · Валидация и оптимизация</div>
+  <h2>Честная оценка качества</h2>
+  <p class="lead">
+    Чтобы получить честную оценку качества модели и подобрать оптимальные гиперпараметры,
+    нужна корректная схема валидации. При несбалансированных классах обязательна стратификация —
+    сохранение пропорций классов в каждом фолде.
+  </p>
+
+  <div class="grid-2" style="margin-bottom: 16px;">
+
+    <!-- StratifiedKFold -->
+    <div class="algo-card">
+      <div class="algo-header green">
+        StratifiedKFold
+        <span class="algo-tag">scikit-learn</span>
+      </div>
+      <div class="algo-body">
+        <p>k-блочная кросс-валидация со стратификацией: данные разбиваются на k непересекающихся фолдов так, чтобы в каждом сохранялись пропорции классов. Модель обучается k раз (на k−1 фолдах) и оценивается на оставшемся. Итоговая метрика — среднее по k оценкам.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <g font-size="9" fill="#9090a0">
+              <text x="20" y="22">Итер. 1</text><text x="20" y="44">Итер. 2</text>
+              <text x="20" y="66">Итер. 3</text><text x="20" y="88">Итер. 4</text>
+              <text x="20" y="110">Итер. 5</text>
+            </g>
+            <g>
+              <rect x="70" y="12" width="60" height="14" fill="#1DB87A"/>
+              <rect x="130" y="12" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="190" y="12" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="250" y="12" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="310" y="12" width="60" height="14" fill="#e8e8ec"/>
+
+              <rect x="70" y="34" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="130" y="34" width="60" height="14" fill="#1DB87A"/>
+              <rect x="190" y="34" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="250" y="34" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="310" y="34" width="60" height="14" fill="#e8e8ec"/>
+
+              <rect x="70" y="56" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="130" y="56" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="190" y="56" width="60" height="14" fill="#1DB87A"/>
+              <rect x="250" y="56" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="310" y="56" width="60" height="14" fill="#e8e8ec"/>
+
+              <rect x="70" y="78" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="130" y="78" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="190" y="78" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="250" y="78" width="60" height="14" fill="#1DB87A"/>
+              <rect x="310" y="78" width="60" height="14" fill="#e8e8ec"/>
+
+              <rect x="70" y="100" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="130" y="100" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="190" y="100" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="250" y="100" width="60" height="14" fill="#e8e8ec"/>
+              <rect x="310" y="100" width="60" height="14" fill="#1DB87A"/>
+            </g>
+            <g font-size="9">
+              <rect x="385" y="16" width="10" height="10" fill="#1DB87A"/>
+              <text x="400" y="24" fill="#1DB87A" font-weight="600">test</text>
+              <rect x="385" y="34" width="10" height="10" fill="#e8e8ec"/>
+              <text x="400" y="42" fill="#9090a0">train</text>
+            </g>
+          </svg>
+          <div class="caption">5-fold стратифицированная кросс-валидация</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html" target="_blank">sklearn docs</a>
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/cross_validation.html" target="_blank">CV user guide</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Cross-validation_(statistics)" target="_blank">Wikipedia</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- GridSearchCV -->
+    <div class="algo-card">
+      <div class="algo-header green">
+        GridSearchCV
+        <span class="algo-tag">scikit-learn</span>
+      </div>
+      <div class="algo-body">
+        <p>Сеточный поиск оптимальных гиперпараметров модели. Для каждой комбинации значений из заданной сетки выполняется кросс-валидация; выбирается комбинация с лучшей средней метрикой. В нашем проекте оптимизируется <strong>f1_macro</strong> — корректный выбор при несбалансированных классах.</p>
+
+        <div class="code-block">
+          param_grid = {<br>
+          &nbsp;&nbsp;<span class="st">'n_estimators'</span>: [6, 8, 16, 24],<br>
+          &nbsp;&nbsp;<span class="st">'num_leaves'</span>: [4, 6, 8],<br>
+          &nbsp;&nbsp;<span class="st">'reg_alpha'</span>: [1, 1.5],<br>
+          &nbsp;&nbsp;<span class="st">'reg_lambda'</span>: [1, 1.5],<br>
+          }<br>
+          grid = <span class="fn">GridSearchCV</span>(pipe, param_grid,<br>
+          &nbsp;&nbsp;cv=cv, scoring=<span class="st">'f1_macro'</span>)
+        </div>
+
+        <p style="margin-top: 12px;"><strong>Подбираемые гиперпараметры LightGBM:</strong></p>
+        <ul style="font-size: 13px; color: var(--text2); padding-left: 20px; line-height: 1.7;">
+          <li><span class="col-code">n_estimators</span> — число деревьев бустинга</li>
+          <li><span class="col-code">num_leaves</span> — максимальное число листьев в дереве</li>
+          <li><span class="col-code">reg_alpha / reg_lambda</span> — L1 / L2 регуляризация</li>
+        </ul>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html" target="_blank">sklearn docs</a>
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/grid_search.html" target="_blank">tuning user guide</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Hyperparameter_optimization" target="_blank">Wikipedia</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- VI. МЕТРИКИ -->
+<div class="section-wrap" id="metrics">
+  <div class="section-eyebrow">VI · Метрики качества</div>
+  <h2>Как понять, что модель работает</h2>
+  <p class="lead">
+    При несбалансированных классах простая accuracy обманчива. Используется система
+    из нескольких per-class и усреднённых метрик, плюс кривые ROC и precision-recall.
+  </p>
+
+  <!-- Confusion matrix -->
+  <div class="algo-card" style="margin-bottom: 16px;">
+    <div class="algo-header orange">
+      Confusion matrix и производные метрики
+      <span class="algo-tag">основа всех метрик</span>
+    </div>
+    <div class="algo-body">
+      <div class="algo-figure">
+        <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+          <text x="150" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#0a0a0f">Confusion matrix</text>
+          <text x="80" y="50" text-anchor="middle" font-size="10" fill="#555560">предсказано: +</text>
+          <text x="200" y="50" text-anchor="middle" font-size="10" fill="#555560">предсказано: −</text>
+          <text x="30" y="100" text-anchor="middle" font-size="10" fill="#555560" transform="rotate(-90, 30, 100)">истина: +</text>
+          <text x="30" y="170" text-anchor="middle" font-size="10" fill="#555560" transform="rotate(-90, 30, 170)">истина: −</text>
+
+          <rect x="50" y="60" width="100" height="70" fill="#1DB87A" opacity="0.85" rx="6"/>
+          <text x="100" y="92" text-anchor="middle" fill="white" font-size="20" font-weight="700">TP</text>
+          <text x="100" y="115" text-anchor="middle" fill="white" font-size="11" opacity="0.9">верно +</text>
+
+          <rect x="150" y="60" width="100" height="70" fill="#e87930" opacity="0.85" rx="6"/>
+          <text x="200" y="92" text-anchor="middle" fill="white" font-size="20" font-weight="700">FN</text>
+          <text x="200" y="115" text-anchor="middle" fill="white" font-size="11" opacity="0.9">пропуск</text>
+
+          <rect x="50" y="130" width="100" height="70" fill="#e87930" opacity="0.85" rx="6"/>
+          <text x="100" y="162" text-anchor="middle" fill="white" font-size="20" font-weight="700">FP</text>
+          <text x="100" y="185" text-anchor="middle" fill="white" font-size="11" opacity="0.9">ложн. тревога</text>
+
+          <rect x="150" y="130" width="100" height="70" fill="#1DB87A" opacity="0.85" rx="6"/>
+          <text x="200" y="162" text-anchor="middle" fill="white" font-size="20" font-weight="700">TN</text>
+          <text x="200" y="185" text-anchor="middle" fill="white" font-size="11" opacity="0.9">верно −</text>
+
+          <g transform="translate(310, 60)" font-size="13">
+            <text y="0" font-weight="700" font-size="14" fill="#0a0a0f">Precision = TP / (TP + FP)</text>
+            <text y="18" font-size="11" fill="#555560">Доля верных среди всех предсказанных +</text>
+
+            <text y="50" font-weight="700" font-size="14" fill="#0a0a0f">Recall = TP / (TP + FN)</text>
+            <text y="68" font-size="11" fill="#555560">Доля найденных среди всех реальных +</text>
+
+            <text y="100" font-weight="700" font-size="14" fill="#0a0a0f">F1 = 2·P·R / (P + R)</text>
+            <text y="118" font-size="11" fill="#555560">Гармоническое среднее, баланс P и R</text>
+
+            <text y="150" font-weight="700" font-size="14" fill="#0a0a0f">Accuracy = (TP + TN) / N</text>
+            <text y="168" font-size="11" fill="#9090a0" font-style="italic">обманчива при дисбалансе</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="algo-meta">Документация и материалы</div>
+      <div class="algo-links">
+        <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics" target="_blank">sklearn metrics guide</a>
+        <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html" target="_blank">confusion_matrix</a>
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Confusion_matrix" target="_blank">Wikipedia: CM</a>
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/F-score" target="_blank">Wikipedia: F1</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROC & PR curves -->
+  <div class="grid-2" style="margin-bottom: 16px;">
+    <div class="algo-card">
+      <div class="algo-header orange">
+        ROC-кривая (AUC)
+        <span class="algo-tag">кривая качества</span>
+      </div>
+      <div class="algo-body">
+        <p>График TPR vs FPR при изменении порога классификации. Площадь под кривой (AUC) — мера ранжирующей способности модели, независимая от порога. AUC = 1 идеально, AUC = 0.5 случайно.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <line x1="50" y1="200" x2="370" y2="200" stroke="#0a0a0f" stroke-width="1"/>
+            <line x1="50" y1="200" x2="50" y2="30" stroke="#0a0a0f" stroke-width="1"/>
+            <text x="210" y="225" text-anchor="middle" font-size="11" fill="#555560">False Positive Rate</text>
+            <text x="20" y="115" text-anchor="middle" font-size="11" fill="#555560" transform="rotate(-90, 20, 115)">True Positive Rate</text>
+            <line x1="50" y1="200" x2="370" y2="30" stroke="#9090a0" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="320" y="80" font-size="9" fill="#9090a0">случайный</text>
+            <path d="M 50 200 Q 60 100, 130 60 Q 220 35, 370 30" fill="none" stroke="#e87930" stroke-width="2.5"/>
+            <text x="200" y="95" font-size="13" font-weight="700" fill="#e87930">AUC = 0.95</text>
+            <text x="50" y="215" font-size="9" fill="#9090a0" text-anchor="middle">0</text>
+            <text x="370" y="215" font-size="9" fill="#9090a0" text-anchor="middle">1</text>
+            <text x="40" y="200" font-size="9" fill="#9090a0" text-anchor="end">0</text>
+            <text x="40" y="35" font-size="9" fill="#9090a0" text-anchor="end">1</text>
+            <circle cx="50" cy="30" r="3" fill="#1DB87A"/>
+            <text x="60" y="25" font-size="10" fill="#1DB87A" font-weight="600">идеал</text>
+          </svg>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_curve.html" target="_blank">roc_curve</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic" target="_blank">Wikipedia: ROC</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="algo-card">
+      <div class="algo-header orange">
+        Precision-Recall кривая (AP)
+        <span class="algo-tag">для дисбаланса</span>
+      </div>
+      <div class="algo-body">
+        <p>График Precision vs Recall. Average Precision (AP) — площадь под кривой. При сильном дисбалансе классов PR-AUC <strong>более информативна</strong>, чем ROC-AUC.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <line x1="50" y1="200" x2="370" y2="200" stroke="#0a0a0f" stroke-width="1"/>
+            <line x1="50" y1="200" x2="50" y2="30" stroke="#0a0a0f" stroke-width="1"/>
+            <text x="210" y="225" text-anchor="middle" font-size="11" fill="#555560">Recall</text>
+            <text x="20" y="115" text-anchor="middle" font-size="11" fill="#555560" transform="rotate(-90, 20, 115)">Precision</text>
+            <line x1="50" y1="170" x2="370" y2="170" stroke="#9090a0" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="320" y="165" font-size="9" fill="#9090a0">baseline (5%)</text>
+            <path d="M 50 35 Q 200 50, 300 80 Q 350 120, 370 200" fill="none" stroke="#e87930" stroke-width="2.5"/>
+            <text x="170" y="110" font-size="13" font-weight="700" fill="#e87930">AP = 0.80</text>
+            <text x="50" y="215" font-size="9" fill="#9090a0" text-anchor="middle">0</text>
+            <text x="370" y="215" font-size="9" fill="#9090a0" text-anchor="middle">1</text>
+            <text x="40" y="200" font-size="9" fill="#9090a0" text-anchor="end">0</text>
+            <text x="40" y="35" font-size="9" fill="#9090a0" text-anchor="end">1</text>
+            <circle cx="370" cy="30" r="3" fill="#1DB87A"/>
+            <text x="365" y="25" font-size="10" fill="#1DB87A" text-anchor="end" font-weight="600">идеал</text>
+          </svg>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_curve.html" target="_blank">PR curve docs</a>
+          <a class="link-pill paper" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432" target="_blank">Saito & Rehmsmeier, 2015</a>
+          <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank">Wikipedia</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 24px; font-size: 18px;">Стратегии усреднения метрик по классам</h3>
+  <div class="table-wrap" style="margin-top: 12px;">
+    <table>
+      <thead>
+        <tr><th>Стратегия</th><th>Формула</th><th>Когда применять</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>macro</strong></td>
+          <td><span class="col-code">(M₁ + M₂ + ... + M_K) / K</span></td>
+          <td>Все классы равноправны — корректно при дисбалансе</td>
+        </tr>
+        <tr>
+          <td><strong>weighted</strong></td>
+          <td><span class="col-code">Σ M_k · n_k / N</span></td>
+          <td>Веса = размеры классов — маскирует проблемы на редких</td>
+        </tr>
+        <tr>
+          <td><strong>micro</strong></td>
+          <td><span class="col-code">Глобальный TP/FP/FN</span></td>
+          <td>При multiclass = accuracy</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- VII. ИНТЕРПРЕТАЦИЯ -->
+<div class="section-wrap" id="interpretation">
+  <div class="section-eyebrow">VII · Интерпретация</div>
+  <h2>На что смотрит модель</h2>
+  <p class="lead">
+    Хорошая модель должна не только предсказывать, но и быть понятной: какие признаки на что
+    влияют, в каких случаях модель уверена, а в каких сомневается.
+  </p>
+
+  <div class="grid-2">
+    <div class="algo-card">
+      <div class="algo-header green">
+        Feature Importance (gain-based)
+        <span class="algo-tag">встроено в LightGBM</span>
+      </div>
+      <div class="algo-body">
+        <p>Суммарный прирост качества модели от использования каждого признака во всех узлах деревьев бустинга. Показывает, на какие переменные модель опирается чаще всего.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <g font-size="10" fill="#0a0a0f">
+              <text x="10" y="25">Положение гондолы</text>
+              <rect x="160" y="14" width="240" height="14" fill="#e87930" rx="3"/>
+              <text x="405" y="25" font-weight="700">103</text>
+              <text x="10" y="50">Rotor temp.</text>
+              <rect x="160" y="39" width="128" height="14" fill="#e87930" opacity="0.85" rx="3"/>
+              <text x="293" y="50" font-weight="700">55</text>
+              <text x="10" y="75">max Rotation</text>
+              <rect x="160" y="64" width="124" height="14" fill="#e87930" opacity="0.75" rx="3"/>
+              <text x="289" y="75" font-weight="700">53</text>
+              <text x="10" y="100">min Rotation</text>
+              <rect x="160" y="89" width="106" height="14" fill="#e87930" opacity="0.65" rx="3"/>
+              <text x="271" y="100" font-weight="700">46</text>
+              <text x="10" y="125">Rear bearing temp.</text>
+              <rect x="160" y="114" width="80" height="14" fill="#e87930" opacity="0.55" rx="3"/>
+              <text x="245" y="125" font-weight="700">34</text>
+              <text x="10" y="150">Reactive power</text>
+              <rect x="160" y="139" width="58" height="14" fill="#e87930" opacity="0.45" rx="3"/>
+              <text x="223" y="150" font-weight="700">25</text>
+              <text x="10" y="175">Tower temp.</text>
+              <rect x="160" y="164" width="58" height="14" fill="#e87930" opacity="0.4" rx="3"/>
+              <text x="223" y="175" font-weight="700">25</text>
+            </g>
+            <line x1="160" y1="10" x2="160" y2="190" stroke="#0a0a0f" stroke-width="1"/>
+          </svg>
+          <div class="caption">Топ-7 признаков по важности в LightGBM</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMClassifier.html" target="_blank">LGBM API</a>
+          <a class="link-pill paper" href="https://shap.readthedocs.io/" target="_blank">SHAP (продвинутый)</a>
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/permutation_importance.html" target="_blank">Permutation Importance</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="algo-card">
+      <div class="algo-header green">
+        Per-class анализ ошибок
+        <span class="algo-tag">встроено в sklearn</span>
+      </div>
+      <div class="algo-body">
+        <p>Распределение предсказаний модели для объектов каждого истинного класса. Позволяет увидеть, <em>куда уходят</em> ошибки конкретного класса — симметричная путаница FF ↔ EF, например.</p>
+
+        <div class="algo-figure">
+          <svg viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+            <text x="40" y="20" font-size="12" font-weight="700" fill="#0a0a0f">Истинный класс FF →</text>
+            <rect x="40" y="50" width="40" height="120" fill="#e8e8ec" rx="3"/>
+            <text x="60" y="185" text-anchor="middle" font-size="11" fill="#0a0a0f">AF</text>
+            <text x="60" y="42" text-anchor="middle" font-size="10" fill="#9090a0">1.5%</text>
+            <rect x="100" y="100" width="40" height="70" fill="#e87930" rx="3"/>
+            <text x="120" y="185" text-anchor="middle" font-size="11" fill="#0a0a0f">EF</text>
+            <text x="120" y="92" text-anchor="middle" font-size="10" font-weight="700" fill="#e87930">20.6%</text>
+            <rect x="160" y="20" width="40" height="150" fill="#1DB87A" rx="3"/>
+            <text x="180" y="185" text-anchor="middle" font-size="11" font-weight="700" fill="#0a0a0f">FF</text>
+            <text x="180" y="12" text-anchor="middle" font-size="10" font-weight="700" fill="#1DB87A">76.5%</text>
+            <text x="240" y="185" text-anchor="middle" font-size="11" fill="#0a0a0f">GF</text>
+            <text x="300" y="185" text-anchor="middle" font-size="11" fill="#0a0a0f">MF</text>
+            <rect x="340" y="165" width="40" height="5" fill="#e8e8ec" rx="2"/>
+            <text x="360" y="185" text-anchor="middle" font-size="11" fill="#0a0a0f">NF</text>
+            <text x="360" y="158" text-anchor="middle" font-size="10" fill="#9090a0">1.4%</text>
+            <line x1="30" y1="170" x2="420" y2="170" stroke="#0a0a0f" stroke-width="1"/>
+            <text x="210" y="205" font-size="10" fill="#9090a0" text-anchor="middle" font-style="italic">симметричная путаница с EF — физическая близость подсистем</text>
+          </svg>
+          <div class="caption">«Куда уходят» объекты истинного класса FF</div>
+        </div>
+
+        <div class="algo-meta">Документация и материалы</div>
+        <div class="algo-links">
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html" target="_blank">classification_report</a>
+          <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_fscore_support.html" target="_blank">per-class metrics</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ЧЕГО НЕТ -->
+<div class="section-wrap" id="missing">
+  <div class="section-eyebrow">Расширение</div>
+  <h2>Чего нет в этом проекте</h2>
+  <p class="lead">
+    Для полноты картины — методы, которые не использовались в основной работе,
+    но могут пригодиться для самостоятельных заданий и развития проекта.
+  </p>
+
+  <div class="grid-3">
+    <div class="card card-purple">
+      <h3>BorderlineSMOTE · ADASYN</h3>
+      <p style="margin-bottom: 12px;">Варианты SMOTE с фокусом на пограничные миноритарные точки.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <a class="link-pill paper" href="https://link.springer.com/chapter/10.1007/11538059_91" target="_blank">Han et al.</a>
+        <a class="link-pill doc" href="https://imbalanced-learn.org/stable/references/over_sampling.html" target="_blank">imblearn</a>
+      </div>
+    </div>
+    <div class="card card-green">
+      <h3>TimeSeriesSplit</h3>
+      <p style="margin-bottom: 12px;">Корректная валидация для временных рядов: train предшествует test по времени.</p>
+      <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html" target="_blank">sklearn docs</a>
+    </div>
+    <div class="card card-blue">
+      <h3>PCA · t-SNE · UMAP</h3>
+      <p style="margin-bottom: 12px;">Проекция многомерных признаков в 2D для визуализации разделимости классов.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <a class="link-pill doc" href="https://scikit-learn.org/stable/modules/decomposition.html#pca" target="_blank">PCA</a>
+        <a class="link-pill paper" href="https://www.jmlr.org/papers/v9/vandermaaten08a.html" target="_blank">t-SNE</a>
+        <a class="link-pill paper" href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP</a>
+      </div>
+    </div>
+    <div class="card card-orange">
+      <h3>SHAP · Permutation Importance</h3>
+      <p style="margin-bottom: 12px;">Более глубокие методы интерпретации модели на уровне отдельного предсказания.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <a class="link-pill paper" href="https://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions" target="_blank">SHAP paper</a>
+        <a class="link-pill doc" href="https://shap.readthedocs.io/" target="_blank">SHAP docs</a>
+      </div>
+    </div>
+    <div class="card card-purple">
+      <h3>XGBoost · CatBoost · RF</h3>
+      <p style="margin-bottom: 12px;">Альтернативные градиентные бустинги и ансамбли с другими преимуществами.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <a class="link-pill doc" href="https://xgboost.readthedocs.io/" target="_blank">XGBoost</a>
+        <a class="link-pill doc" href="https://catboost.ai/" target="_blank">CatBoost</a>
+      </div>
+    </div>
+    <div class="card card-green">
+      <h3>LSTM · CNN · Autoencoder</h3>
+      <p style="margin-bottom: 12px;">Нейросети для использования временной структуры или anomaly detection.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Long_short-term_memory" target="_blank">LSTM</a>
+        <a class="link-pill wiki" href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank">Autoencoder</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- REFERENCES -->
+<div class="section-wrap references-section" id="references">
+  <div class="section-eyebrow">Литература</div>
+  <h2>Первоисточники</h2>
+
+  <ol>
+    <li>Ke G. et al. <em>LightGBM: A Highly Efficient Gradient Boosting Decision Tree.</em> NeurIPS 2017. <a href="https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree" target="_blank">papers.nips.cc ↗</a></li>
+    <li>Chawla N. V. et al. <em>SMOTE: Synthetic Minority Over-sampling Technique.</em> JAIR 2002. <a href="https://www.jair.org/index.php/jair/article/view/10302" target="_blank">jair.org ↗</a></li>
+    <li>Pedregosa F. et al. <em>Scikit-learn: Machine Learning in Python.</em> JMLR 2011. <a href="https://jmlr.org/papers/v12/pedregosa11a.html" target="_blank">jmlr.org ↗</a></li>
+    <li>Lemaître G., Nogueira F., Aridas C. <em>Imbalanced-learn: A Python Toolbox.</em> JMLR 2017. <a href="https://jmlr.org/papers/v18/16-365.html" target="_blank">jmlr.org ↗</a></li>
+    <li>Tukey J. W. <em>Exploratory Data Analysis.</em> Addison-Wesley, 1977.</li>
+    <li>Breiman L. <em>Random Forests.</em> Machine Learning, 2001. <a href="https://link.springer.com/article/10.1023/A:1010933404324" target="_blank">springer.com ↗</a></li>
+    <li>Saito T., Rehmsmeier M. <em>The Precision-Recall Plot Is More Informative than the ROC Plot When Evaluating Binary Classifiers on Imbalanced Datasets.</em> PLoS ONE 2015. <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432" target="_blank">plos.org ↗</a></li>
+    <li>Tautz-Weinert J., Watson S. J. <em>Using SCADA data for wind turbine condition monitoring — a review.</em> IET Renewable Power Generation 2017. <a href="https://doi.org/10.1049/iet-rpg.2016.0248" target="_blank">doi.org ↗</a></li>
+    <li>Документация: <a href="https://scikit-learn.org/stable/" target="_blank">scikit-learn ↗</a> · <a href="https://lightgbm.readthedocs.io/" target="_blank">LightGBM ↗</a> · <a href="https://imbalanced-learn.org/stable/" target="_blank">imbalanced-learn ↗</a></li>
+  </ol>
+</div>
+
+<footer>
+  <div>Учебный справочник · Предиктивная аналитика ВЭУ · 2025</div>
+  <div>Карта методов машинного обучения · v2.0</div>
+</footer>
+
+</body>
+</html>
